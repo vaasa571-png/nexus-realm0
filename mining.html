@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Майнинг DRC | Nexus Realm</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .game-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .game-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        .game-header p {
+            color: #94a3b8;
+        }
+        
+        .mining-area {
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .drc-crystal {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 2rem;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .drc-crystal:hover {
+            transform: scale(1.05);
+        }
+        
+        .crystal-core {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .crystal-core i {
+            font-size: 3rem;
+            color: white;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-box .label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-box .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6a11cb;
+        }
+        
+        .upgrades {
+            margin: 2rem 0;
+        }
+        
+        .upgrades h3 {
+            margin-bottom: 1rem;
+            color: #6a11cb;
+        }
+        
+        .upgrade-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .upgrade-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .upgrade-info h4 {
+            color: #f8fafc;
+            margin-bottom: 0.25rem;
+        }
+        
+        .upgrade-info p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        
+        .upgrade-cost {
+            color: #10b981;
+            font-weight: bold;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideIn 0.3s ease-out;
+            z-index: 1000;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #94a3b8;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-link:hover {
+            color: #6a11cb;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <a href="../index.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> Назад к сайту
+    </a>
+    
+    <div class="game-container">
+        <div class="game-header">
+            <h1><i class="fas fa-gem"></i> Майнинг DRC</h1>
+            <p>Кликай по кристаллу и зарабатывай DRC!</p>
+        </div>
+        
+        <div class="mining-area">
+            <div class="drc-crystal" id="crystal">
+                <div class="crystal-core">
+                    <i class="fas fa-gem"></i>
+                </div>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">DRC Добыто</div>
+                    <div class="value" id="minedDRC">0.00</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">DRC/Клик</div>
+                    <div class="value" id="perClick">1.00</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Авто-майнинг</div>
+                    <div class="value" id="autoMining">0/сек</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Всего кликов</div>
+                    <div class="value" id="totalClicks">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="upgrades">
+            <h3><i class="fas fa-arrow-up"></i> Улучшения</h3>
+            
+            <div class="upgrade-item" onclick="buyUpgrade('clickPower')">
+                <div class="upgrade-info">
+                    <h4>Усиленный клик</h4>
+                    <p>+0.5 DRC за клик</p>
+                </div>
+                <div class="upgrade-cost" id="clickPowerCost">100 DRC</div>
+            </div>
+            
+            <div class="upgrade-item" onclick="buyUpgrade('autoMiner')">
+                <div class="upgrade-info">
+                    <h4>Авто-майнер</h4>
+                    <p>+0.1 DRC/сек</p>
+                </div>
+                <div class="upgrade-cost" id="autoMinerCost">500 DRC</div>
+            </div>
+            
+            <div class="upgrade-item" onclick="buyUpgrade('clickMultiplier')">
+                <div class="upgrade-info">
+                    <h4>Мультипликатор x2</h4>
+                    <p>Удваивает добычу</p>
+                </div>
+                <div class="upgrade-cost" id="multiplierCost">1000 DRC</div>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="collectDRC()">
+                <i class="fas fa-sack-dollar"></i> Забрать DRC
+            </button>
+            <button class="btn btn-secondary" onclick="resetGame()">
+                <i class="fas fa-redo"></i> Перезапуск
+            </button>
+        </div>
+    </div>
+    
+    <div id="notification" class="notification hidden">
+        <i class="fas fa-check-circle"></i>
+        <span>DRC зачислены на баланс!</span>
+    </div>
+    
+    <script>
+        // Игровые переменные
+        let gameState = {
+            minedDRC: 0,
+            perClick: 1.0,
+            autoMining: 0,
+            totalClicks: 0,
+            upgrades: {
+                clickPower: { level: 0, cost: 100 },
+                autoMiner: { level: 0, cost: 500 },
+                clickMultiplier: { level: 0, cost: 1000 }
+            },
+            userId: localStorage.getItem('nexusUserId'),
+            username: localStorage.getItem('nexusUsername')
+        };
+        
+        // Загрузка сохранённой игры
+        function loadGame() {
+            const saved = localStorage.getItem('miningGame');
+            if (saved) {
+                const savedState = JSON.parse(saved);
+                gameState = { ...gameState, ...savedState };
+            }
+            updateUI();
+        }
+        
+        // Сохранение игры
+        function saveGame() {
+            localStorage.setItem('miningGame', JSON.stringify(gameState));
+        }
+        
+        // Обновление интерфейса
+        function updateUI() {
+            document.getElementById('minedDRC').textContent = gameState.minedDRC.toFixed(2);
+            document.getElementById('perClick').textContent = gameState.perClick.toFixed(2);
+            document.getElementById('autoMining').textContent = `${gameState.autoMining.toFixed(1)}/сек`;
+            document.getElementById('totalClicks').textContent = gameState.totalClicks;
+            
+            // Обновляем цены улучшений
+            document.getElementById('clickPowerCost').textContent = 
+                `${gameState.upgrades.clickPower.cost} DRC`;
+            document.getElementById('autoMinerCost').textContent = 
+                `${gameState.upgrades.autoMiner.cost} DRC`;
+            document.getElementById('multiplierCost').textContent = 
+                `${gameState.upgrades.clickMultiplier.cost} DRC`;
+        }
+        
+        // Клик по кристаллу
+        document.getElementById('crystal').addEventListener('click', () => {
+            gameState.minedDRC += gameState.perClick;
+            gameState.totalClicks++;
+            
+            // Анимация клика
+            const crystal = document.getElementById('crystal');
+            crystal.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                crystal.style.transform = 'scale(1)';
+            }, 100);
+            
+            // Партиклы
+            createParticle();
+            
+            updateUI();
+            saveGame();
+        });
+        
+        // Покупка улучшения
+        function buyUpgrade(type) {
+            const upgrade = gameState.upgrades[type];
+            
+            if (gameState.minedDRC >= upgrade.cost) {
+                gameState.minedDRC -= upgrade.cost;
+                upgrade.level++;
+                
+                // Эффекты улучшений
+                switch(type) {
+                    case 'clickPower':
+                        gameState.perClick += 0.5;
+                        upgrade.cost = Math.floor(upgrade.cost * 1.5);
+                        break;
+                    case 'autoMiner':
+                        gameState.autoMining += 0.1;
+                        upgrade.cost = Math.floor(upgrade.cost * 2);
+                        break;
+                    case 'clickMultiplier':
+                        gameState.perClick *= 2;
+                        upgrade.cost = Math.floor(upgrade.cost * 3);
+                        break;
+                }
+                
+                showNotification(`Улучшение "${type}" куплено!`);
+                updateUI();
+                saveGame();
+            } else {
+                showNotification('Недостаточно DRC!', 'error');
+            }
+        }
+        
+        // Забрать DRC на основной баланс
+        async function collectDRC() {
+            if (gameState.minedDRC < 0.01) {
+                showNotification('Нет DRC для сбора!', 'error');
+                return;
+            }
+            
+            if (!gameState.userId) {
+                showNotification('Сначала подключите Telegram!', 'error');
+                return;
+            }
+            
+            try {
+                // Отправляем запрос на API
+                const response = await fetch('https://твой-ник.pythonanywhere.com/game/reward', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: gameState.userId,
+                        amount: gameState.minedDRC,
+                        game: 'mining'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    showNotification(`Получено ${gameState.minedDRC.toFixed(2)} DRC!`);
+                    
+                    // Сбрасываем добытые DRC
+                    gameState.minedDRC = 0;
+                    updateUI();
+                    saveGame();
+                } else {
+                    showNotification('Ошибка сервера', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // Демо-режим: просто показываем уведомление
+                showNotification(`Демо: ${gameState.minedDRC.toFixed(2)} DRC зачислены!`);
+                gameState.minedDRC = 0;
+                updateUI();
+                saveGame();
+            }
+        }
+        
+        // Авто-майнинг
+        setInterval(() => {
+            if (gameState.autoMining > 0) {
+                gameState.minedDRC += gameState.autoMining;
+                updateUI();
+                saveGame();
+            }
+        }, 1000);
+        
+        // Перезапуск игры
+        function resetGame() {
+            if (confirm('Сбросить прогресс игры?')) {
+                gameState = {
+                    minedDRC: 0,
+                    perClick: 1.0,
+                    autoMining: 0,
+                    totalClicks: 0,
+                    upgrades: {
+                        clickPower: { level: 0, cost: 100 },
+                        autoMiner: { level: 0, cost: 500 },
+                        clickMultiplier: { level: 0, cost: 1000 }
+                    },
+                    userId: gameState.userId,
+                    username: gameState.username
+                };
+                
+                localStorage.removeItem('miningGame');
+                updateUI();
+                showNotification('Игра сброшена!');
+            }
+        }
+        
+        // Уведомления
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const icon = notification.querySelector('i');
+            const text = notification.querySelector('span');
+            
+            text.textContent = message;
+            
+            if (type === 'error') {
+                notification.style.background = '#ef4444';
+                icon.className = 'fas fa-exclamation-circle';
+            } else {
+                notification.style.background = '#10b981';
+                icon.className = 'fas fa-check-circle';
+            }
+            
+            notification.classList.remove('hidden');
+            
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 3000);
+        }
+        
+        // Партиклы
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.innerHTML = `<i class="fas fa-gem"></i> +${gameState.perClick.toFixed(1)}`;
+            particle.style.cssText = `
+                position: fixed;
+                color: #6a11cb;
+                font-weight: bold;
+                pointer-events: none;
+                z-index: 1000;
+                animation: floatUp 1s ease-out forwards;
+            `;
+            
+            const crystalRect = document.getElementById('crystal').getBoundingClientRect();
+            particle.style.left = (crystalRect.left + crystalRect.width / 2) + 'px';
+            particle.style.top = (crystalRect.top + crystalRect.height / 2) + 'px';
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 1000);
+        }
+        
+        // CSS для анимации партиклов
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes floatUp {
+                0% { transform: translate(0, 0) scale(1); opacity: 1; }
+                100% { transform: translate(0, -100px) scale(0.5); opacity: 0; }
+            }
+            
+            .hidden { display: none; }
+        `;
+        document.head.appendChild(style);
+        
+        // Загружаем игру при старте
+        window.addEventListener('DOMContentLoaded', loadGame);
+        
+        // Проверяем подключение к Telegram
+        const nexusState = localStorage.getItem('nexusState');
+        if (nexusState) {
+            const state = JSON.parse(nexusState);
+            gameState.userId = state.user?.id;
+            gameState.username = state.user?.username;
+        }
+    </script>
+</body>
+</html>
