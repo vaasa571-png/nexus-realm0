@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Realm | Метавселенная DRC</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-crown"></i>
+                <span>Nexus Realm</span>
+            </div>
+            <div class="nav-links">
+                <a href="#market"><i class="fas fa-coins"></i> Маркет</a>
+                <a href="#games"><i class="fas fa-gamepad"></i> Игры</a>
+                <a href="#social"><i class="fas fa-users"></i> Сообщество</a>
+                <a href="#wallet"><i class="fas fa-wallet"></i> Кошелёк</a>
+            </div>
+            <div class="nav-auth">
+                <button id="connectTG" class="btn-connect">
+                    <i class="fab fa-telegram"></i> Подключить Telegram
+                </button>
+                <div id="userInfo" class="user-info hidden">
+                    <span id="username">User</span>
+                    <span id="balance">0 DRC</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Герой секция -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Nexus Realm</h1>
+            <h2>Метавселенная, где DRC — всё</h2>
+            <p>Играй, общайся, торгуй и зарабатывай в нашей цифровой вселенной</p>
+            
+            <div class="hero-stats">
+                <div class="stat">
+                    <i class="fas fa-users"></i>
+                    <div>
+                        <h3 id="totalUsers">0</h3>
+                        <p>Пользователей</p>
+                    </div>
+                </div>
+                <div class="stat">
+                    <i class="fas fa-coins"></i>
+                    <div>
+                        <h3 id="totalDRC">0</h3>
+                        <p>DRC в обороте</p>
+                    </div>
+                </div>
+                <div class="stat">
+                    <i class="fas fa-chart-line"></i>
+                    <div>
+                        <h3 id="drcPrice">0.001</h3>
+                        <p>Цена DRC (USDT)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-buttons">
+                <button id="buyDRC" class="btn-primary">
+                    <i class="fas fa-shopping-cart"></i> Купить DRC
+                </button>
+                <button id="playGame" class="btn-secondary">
+                    <i class="fas fa-play"></i> Начать играть
+                </button>
+                <button id="connectBot" class="btn-telegram">
+                    <i class="fab fa-telegram"></i> Открыть бота
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Маркетплейс -->
+    <section id="market" class="section">
+        <h2><i class="fas fa-coins"></i> Торговая площадка DRC</h2>
+        <div class="market-container">
+            <!-- Покупка DRC -->
+            <div class="card">
+                <h3>Купить DRC</h3>
+                <div class="price-info">
+                    <p>1 USDT = <span id="rateBuy">1000</span> DRC</p>
+                    <p class="small">Комиссия: 0.5%</p>
+                </div>
+                
+                <div class="input-group">
+                    <label for="buyAmount">Сумма в USDT:</label>
+                    <input type="number" id="buyAmount" min="1" value="10">
+                    <div class="currency">USDT</div>
+                </div>
+                
+                <div class="conversion">
+                    <p>Вы получите: <span id="drcReceive">10000</span> DRC</p>
+                </div>
+                
+                <div class="payment-methods">
+                    <h4>Способ оплаты:</h4>
+                    <div class="methods">
+                        <button class="method-btn active" data-network="TRC20">
+                            <i class="fab fa-bitcoin"></i> TRC20
+                        </button>
+                        <button class="method-btn" data-network="ERC20">
+                            <i class="fab fa-ethereum"></i> ERC20
+                        </button>
+                    </div>
+                </div>
+                
+                <button id="proceedBuy" class="btn-success">
+                    <i class="fas fa-arrow-right"></i> Перейти к оплате
+                </button>
+            </div>
+            
+            <!-- Продажа DRC -->
+            <div class="card">
+                <h3>Продать DRC</h3>
+                <div class="price-info">
+                    <p>1 DRC = <span id="rateSell">0.001</span> USDT</p>
+                    <p class="small">Комиссия: 1%</p>
+                </div>
+                
+                <div class="input-group">
+                    <label for="sellAmount">Сумма в DRC:</label>
+                    <input type="number" id="sellAmount" min="100" value="1000">
+                    <div class="currency">DRC</div>
+                </div>
+                
+                <div class="conversion">
+                    <p>Вы получите: <span id="usdtReceive">1</span> USDT</p>
+                </div>
+                
+                <div class="payment-methods">
+                    <h4>Получить на:</h4>
+                    <div class="methods">
+                        <button class="method-btn active" data-network="TRC20">
+                            <i class="fab fa-bitcoin"></i> TRC20
+                        </button>
+                        <button class="method-btn" data-network="ERC20">
+                            <i class="fab fa-ethereum"></i> ERC20
+                        </button>
+                    </div>
+                </div>
+                
+                <button id="proceedSell" class="btn-warning">
+                    <i class="fas fa-arrow-right"></i> Продать DRC
+                </button>
+            </div>
+            
+            <!-- График цены -->
+            <div class="card chart-card">
+                <h3>График цены DRC</h3>
+                <div id="priceChart"></div>
+                <div class="chart-controls">
+                    <button class="time-btn active" data-period="24h">24ч</button>
+                    <button class="time-btn" data-period="7d">7д</button>
+                    <button class="time-btn" data-period="30d">30д</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Игры -->
+    <section id="games" class="section dark">
+        <h2><i class="fas fa-gamepad"></i> Игры для заработка DRC</h2>
+        <div class="games-container">
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-gem"></i>
+                </div>
+                <h3>Майнинг DRC</h3>
+                <p>Кликай и собирай DRC. Чем дольше играешь, тем больше заработок.</p>
+                <div class="game-stats">
+                    <span><i class="fas fa-coins"></i> Доход: до 100 DRC/час</span>
+                    <span><i class="fas fa-users"></i> Играют: 0</span>
+                </div>
+                <button class="btn-play" data-game="mining">
+                    <i class="fas fa-play"></i> Играть
+                </button>
+            </div>
+            
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-dice"></i>
+                </div>
+                <h3>DRC Рулетка</h3>
+                <p>Ставь DRC на цвет или число. Шанс удвоить или потерять ставку.</p>
+                <div class="game-stats">
+                    <span><i class="fas fa-coins"></i> Минимальная ставка: 10 DRC</span>
+                    <span><i class="fas fa-users"></i> Играют: 0</span>
+                </div>
+                <button class="btn-play" data-game="roulette">
+                    <i class="fas fa-play"></i> Играть
+                </button>
+            </div>
+            
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-chess"></i>
+                </div>
+                <h3>DRC Шахматы</h3>
+                <p>Играй с другими пользователями. Победитель забирает 90% банка.</p>
+                <div class="game-stats">
+                    <span><i class="fas fa-coins"></i> Банк матча: 100-1000 DRC</span>
+                    <span><i class="fas fa-users"></i> Играют: 0</span>
+                </div>
+                <button class="btn-play" data-game="chess">
+                    <i class="fas fa-play"></i> Играть
+                </button>
+            </div>
+            
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3>Космический трейдер</h3>
+                <p>Покупай и продавай ресурсы на разных планетах. Зарабатывай на разнице цен.</p>
+                <div class="game-stats">
+                    <span><i class="fas fa-coins"></i> Стартовый капитал: 1000 DRC</span>
+                    <span><i class="fas fa-users"></i> Играют: 0</span>
+                </div>
+                <button class="btn-play" data-game="trader">
+                    <i class="fas fa-play"></i> Играть
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Социальная сеть -->
+    <section id="social" class="section">
+        <h2><i class="fas fa-users"></i> Сообщество Nexus Realm</h2>
+        <div class="social-container">
+            <div class="chat-card">
+                <h3>Общий чат</h3>
+                <div id="chatMessages" class="chat-messages">
+                    <!-- Сообщения будут здесь -->
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="messageInput" placeholder="Напишите сообщение...">
+                    <button id="sendMessage">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <p class="small">Чат в реальном времени. Все сообщения сохраняются.</p>
+            </div>
+            
+            <div class="users-card">
+                <h3>Топ пользователей</h3>
+                <div id="topUsers" class="top-users">
+                    <!-- Топ пользователей -->
+                </div>
+                <button id="refreshUsers" class="btn-small">
+                    <i class="fas fa-sync"></i> Обновить
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Кошелёк -->
+    <section id="wallet" class="section dark">
+        <h2><i class="fas fa-wallet"></i> Ваш кошелёк DRC</h2>
+        <div class="wallet-container">
+            <div class="wallet-card">
+                <div class="wallet-header">
+                    <h3>DRC Balance</h3>
+                    <span class="wallet-address" id="walletAddress">Не подключен</span>
+                </div>
+                <div class="wallet-balance">
+                    <div class="balance-amount">
+                        <span id="walletBalance">0</span>
+                        <span class="currency">DRC</span>
+                    </div>
+                    <div class="balance-usd">
+                        ≈ $<span id="balanceUSD">0</span>
+                    </div>
+                </div>
+                
+                <div class="wallet-actions">
+                    <button id="sendDRC" class="wallet-btn">
+                        <i class="fas fa-paper-plane"></i> Отправить
+                    </button>
+                    <button id="receiveDRC" class="wallet-btn">
+                        <i class="fas fa-qrcode"></i> Получить
+                    </button>
+                    <button id="historyDRC" class="wallet-btn">
+                        <i class="fas fa-history"></i> История
+                    </button>
+                </div>
+                
+                <div class="wallet-transactions">
+                    <h4>Последние транзакции</h4>
+                    <div id="transactionsList">
+                        <!-- Транзакции -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="qrcode-card">
+                <h3>Ваш QR-код</h3>
+                <div id="qrCode"></div>
+                <p class="small">Отсканируйте для быстрого перевода DRC</p>
+                <button id="saveQR" class="btn-small">
+                    <i class="fas fa-download"></i> Сохранить QR
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Nexus Realm</h4>
+                <p>Метавселенная на блокчейне</p>
+                <p>© 2025 Все права защищены</p>
+            </div>
+            <div class="footer-section">
+                <h4>Контакты</h4>
+                <p><i class="fab fa-telegram"></i> <a href="https://t.me/DreamEmpireBot" target="_blank">@DreamEmpireBot</a></p>
+                <p><i class="fas fa-envelope"></i> support@nexus-realm.com</p>
+            </div>
+            <div class="footer-section">
+                <h4>DRC</h4>
+                <p>Контракт (TRC20): <span class="contract">TMtUdrfmC95EXPFtvGS4wPhN9eUfpXn35c</span></p>
+                <p>Контракт (ERC20): <span class="contract">0x22E1c1d467518821C59a709A4347F9E97Ba1BED0</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Модальные окна -->
+    <div id="modalBuy" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Покупка DRC</h2>
+            <div id="modalBuyContent"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
